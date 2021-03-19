@@ -1,3 +1,4 @@
+// TODO 1.2
 import React from "react";
 
 // Header component
@@ -12,12 +13,23 @@ const Header = (props) => {
 
 // Content component
 const Content = (props) => {
-  const section = props.section;
-  const exercise_count = props.exercise_count;
+  return (
+    <>
+      <Part part={props.part1} exercises={props.exercises1} />
+      <Part part={props.part2} exercises={props.exercises2} />
+      <Part part={props.part3} exercises={props.exercises3} />
+    </>
+  );
+};
+
+// Part component
+const Part = (props) => {
+  const part = props.part;
+  const exercises = props.exercises;
   return (
     <>
       <p>
-        {section}: {exercise_count}
+        {part}: {exercises}
       </p>
     </>
   );
@@ -41,9 +53,14 @@ const App = () => {
   return (
     <div>
       <Header course={course} />
-      <Content section={part1} exercise_count={exercises1} />
-      <Content section={part2} exercise_count={exercises2} />
-      <Content section={part3} exercise_count={exercises3} />
+      <Content
+        part1={part1}
+        part2={part2}
+        part3={part3}
+        exercises1={exercises1}
+        exercises2={exercises2}
+        exercises3={exercises3}
+      />
       <Total total={exercises1 + exercises2 + exercises3} />
     </div>
   );
