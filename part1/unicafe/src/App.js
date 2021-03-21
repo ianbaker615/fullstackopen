@@ -26,6 +26,15 @@ const App = () => {
       <Display statistic={good} text="Good" />
       <Display statistic={neutral} text="Neutral" />
       <Display statistic={bad} text="Bad" />
+      <Display statistic={good + neutral + bad} text="All" />
+      <Display
+        statistic={(good - bad) / (good + neutral + bad)}
+        text="Average"
+      />
+      <Display
+        statistic={((good / (good + neutral + bad)) * 100).toString() + "%"}
+        text="Positive"
+      />
     </>
   );
 };
