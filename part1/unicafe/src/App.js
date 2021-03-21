@@ -2,30 +2,37 @@ import React, { useState } from "react";
 
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>;
 
-// const Statistic;
-const Statistic = ({ text, statistic }) => (
-  <p>
-    {text}: {statistic}
-  </p>
-);
+// render individual statistic
+const Statistic = ({ text, statistic }) => {
+  return (
+    <tr>
+      <td>{text}</td>
+      <td>{statistic}</td>
+    </tr>
+  );
+};
 
+// render all statistics for display
 const Statistics = ({ good, neutral, bad }) => {
   const total = good + neutral + bad;
   const average = (good - bad) / (good + neutral + bad);
   const positive_percentage =
     ((good / (good + neutral + bad)) * 100).toString() + "%";
 
-  if (total == 0) return <p>No feedback given</p>;
+  // conditionally render based on presence of feedback
+  if (total === 0) return <p>No feedback given</p>;
   else {
     return (
-      <>
-        <Statistic statistic={good} text="Good" />
-        <Statistic statistic={neutral} text="Neutral" />
-        <Statistic statistic={bad} text="Bad" />
-        <Statistic statistic={total} text="Total" />
-        <Statistic statistic={average} text="Average" />
-        <Statistic statistic={positive_percentage} text="Positive" />
-      </>
+      <table>
+        <tbody>
+          <Statistic statistic={good} text="Good" />
+          <Statistic statistic={neutral} text="Neutral" />
+          <Statistic statistic={bad} text="Bad" />
+          <Statistic statistic={total} text="Total" />
+          <Statistic statistic={average} text="Average" />
+          <Statistic statistic={positive_percentage} text="Positive" />
+        </tbody>
+      </table>
     );
   }
 };
