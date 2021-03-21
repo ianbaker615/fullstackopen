@@ -15,8 +15,19 @@ const App = () => {
   ];
 
   const [selected, setSelected] = useState(0);
+  // zero-filled array w length of anecdotes array
+  const [votes, setVotes] = useState(
+    Array.apply(null, new Array(10)).map(Number.prototype.valueOf, 0)
+  );
 
-  const handleClick = () => {
+  const handleVote = () => {
+    const vote_copy = [...votes];
+    vote_copy[selected] += 1;
+    setVotes(vote_copy);
+  };
+
+  const handleNext = () => {
+    console.log("handlenext invoked");
     const index = Math.floor(Math.random() * anecdotes.length);
     setSelected(index);
   };
@@ -24,7 +35,9 @@ const App = () => {
   return (
     <>
       <div>{anecdotes[selected]}</div>
-      <Button onClick={handleClick} text="next anecdote" />
+      <div>has {votes[selected]} votes</div>
+      <Button onClick={handleVote} text="vote" />
+      <Button onClick={handleNext} text="next anecdote" selected={selected} />
     </>
   );
 };
