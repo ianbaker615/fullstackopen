@@ -15,16 +15,19 @@ const Statistics = ({ good, neutral, bad }) => {
   const positive_percentage =
     ((good / (good + neutral + bad)) * 100).toString() + "%";
 
-  return (
-    <>
-      <Statistic statistic={good} text="Good" />
-      <Statistic statistic={neutral} text="Neutral" />
-      <Statistic statistic={bad} text="Bad" />
-      <Statistic statistic={total} text="Total" />
-      <Statistic statistic={average} text="Average" />
-      <Statistic statistic={positive_percentage} text="Positive" />
-    </>
-  );
+  if (total == 0) return <p>No feedback given</p>;
+  else {
+    return (
+      <>
+        <Statistic statistic={good} text="Good" />
+        <Statistic statistic={neutral} text="Neutral" />
+        <Statistic statistic={bad} text="Bad" />
+        <Statistic statistic={total} text="Total" />
+        <Statistic statistic={average} text="Average" />
+        <Statistic statistic={positive_percentage} text="Positive" />
+      </>
+    );
+  }
 };
 
 const App = () => {
