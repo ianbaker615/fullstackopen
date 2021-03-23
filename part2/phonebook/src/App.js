@@ -1,10 +1,37 @@
 import React, { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-const Contacts = () => {
-  return "unimplemented Contacts component for holding multiple Contact components";
+// components
+const NewUserForm = (props) => {
+  return (
+    <form onSubmit={props.addContact}>
+      <div>
+        name:{" "}
+        <input value={props.newContact} onChange={props.handleContactChange} />
+      </div>
+      <div>
+        phone number:{" "}
+        <input value={props.newPhone} onChange={props.handlePhoneChange} />
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  );
 };
-
+const Contacts = ({ contacts, search }) => {
+  // filtering for contacts
+  const filteredContacts = contacts.filter((contact) =>
+    contact.name.toLowerCase().includes(search.toLowerCase())
+  );
+  return (
+    <ul>
+      {filteredContacts.map((contact) => (
+        <Contact key={contact.id} contact={contact} />
+      ))}
+    </ul>
+  );
+};
 const Contact = ({ contact }) => {
   return (
     <li>
@@ -12,7 +39,6 @@ const Contact = ({ contact }) => {
     </li>
   );
 };
-
 const App = () => {
   // state stuff
   const [contacts, setContacts] = useState([
@@ -58,36 +84,24 @@ const App = () => {
     setSearch(e.target.value);
   };
 
-  const filteredContacts = contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(search.toLowerCase())
-  );
-
   // the html that is returned
   return (
     <div>
       <h2>Phonebook</h2>
+      <hr />
       <div>
         Search: <input value={search} onChange={handleSearchChange} />
       </div>
-      <form onSubmit={addContact}>
-        <div>
-          name: <input value={newContact} onChange={handleContactChange} />
-        </div>
-        <div>
-          phone number: <input value={newPhone} onChange={handlePhoneChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <hr />
+      <NewUserForm
+        addContact={addContact}
+        newContact={newContact}
+        handleContactChange={handleContactChange}
+        handlePhoneChange={handlePhoneChange}
+      />
+      <hr />
       <h2>Contacts</h2>
-      <Contacts />
-      <ul>
-        {filteredContacts.map((contact) => (
-          <Contact key={contact.id} contact={contact} />
-        ))}
-        {contacts.filter((contact) => contact.name.includes({ search }))}
-      </ul>
+      <Contacts contacts={contacts} search={search} />
     </div>
   );
 };
