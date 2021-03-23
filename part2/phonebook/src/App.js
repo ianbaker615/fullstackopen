@@ -20,16 +20,21 @@ const App = () => {
   const addContact = (e) => {
     // prevent form submission on change
     e.preventDefault();
-    // build contact object
-    const contactObject = {
-      name: newContact,
-      // number: ,
-      id: uuidv4(),
-    };
+    // check if name already in phonebook
+    if (contacts.some((contact) => contact.name === newContact))
+      alert(`${newContact} is already in phonebook`);
+    else {
+      // build contact object
+      const contactObject = {
+        name: newContact,
+        // number: ,
+        id: uuidv4(),
+      };
 
-    // append contactObject to persons array in state
-    setContacts(contacts.concat(contactObject));
-    setNewContact("");
+      // append contactObject to persons array in state
+      setContacts(contacts.concat(contactObject));
+      setNewContact("");
+    }
   };
 
   const handleContactChange = (e) => {
