@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 
 // components
 const NewUserForm = (props) => {
@@ -40,16 +41,21 @@ const Contact = ({ contact }) => {
   );
 };
 const App = () => {
-  // state stuff
-  const [contacts, setContacts] = useState([
-    { name: "Ian Baker", phone: "6159574407", id: uuidv4() },
-    { name: "Emily Martin", phone: "7744884701", id: uuidv4() },
-    { name: "Tamara Baker", phone: "6158707720", id: uuidv4() },
-    { name: "Mark Baker", phone: "6158707722", id: uuidv4() },
-  ]);
+  // state
+  const [contacts, setContacts] = useState([]);
   const [newContact, setNewContact] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [search, setSearch] = useState("");
+
+  // hooks
+  useEffect(() => {
+    console.log("effect hook");
+    axios.get("http://localhost:3001/contacts").then((res) => {
+      console.log("promise fulfilled");
+      setContacts(res.data);
+    });
+  }, []);
+  console.log("redner", contacts.length, "contacts");
 
   // event handlers
   const addContact = (e) => {
