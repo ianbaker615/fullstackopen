@@ -1,18 +1,27 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const CountryList = ({ countries, search }) => {
+const CountryList = ({ countries, search, setSearch }) => {
   // filter for countries
-  const filteredCountries = countries.filter((country) =>
+  let filteredCountries = countries.filter((country) =>
     country.name.toLowerCase().includes(search.toLowerCase())
   );
+  // event handlers
+  const handleShow = (country) => {
+    setSearch(country.name);
+  };
   if (filteredCountries.length === 1) {
     return <CountryDetail country={filteredCountries[0]} />;
   } else if (filteredCountries.length <= 10) {
     return (
       <ul>
         {filteredCountries.map((country) => (
-          <li key={country.numericCode}>{country.name}</li>
+          <li key={country.numericCode}>
+            {country.name}{" "}
+            <button onClick={() => handleShow(country)} type="button">
+              show
+            </button>
+          </li>
         ))}
       </ul>
     );
@@ -64,7 +73,11 @@ function App() {
         {" "}
         Search: <input value={search} onChange={handleSearchChange} />
       </div>
-      <CountryList countries={countries} search={search} />
+      <CountryList
+        countries={countries}
+        search={search}
+        setSearch={setSearch}
+      />
     </div>
   );
 }
