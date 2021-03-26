@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+require("dotenv").config();
 
-const CountryList = ({ countries, search, setSearch }) => {
+const CountryList = ({ countries, search, setSearch, weather, setWeather }) => {
   // filter for countries
   let filteredCountries = countries.filter((country) =>
     country.name.toLowerCase().includes(search.toLowerCase())
@@ -11,7 +12,26 @@ const CountryList = ({ countries, search, setSearch }) => {
     setSearch(country.name);
   };
   if (filteredCountries.length === 1) {
-    return <CountryDetail country={filteredCountries[0]} />;
+    const params = {
+      access_key: process.env.REACT_APP_WEATHERSTACK_API_KEY,
+      query: filteredCountries[0].capital,
+    };
+
+    // TODO 2.14
+    // tired moving the call from country detail to here, it doesnt work
+    // spams requests.
+    // axios.get(`http://api.weatherstack.com/current`, { params }).then((res) => {
+    //   setWeather(res.data);
+    //   console.log("weather object", weather);
+    // });
+
+    return (
+      <CountryDetail
+        country={filteredCountries[0]}
+        weather={weather}
+        setWeather={setWeather}
+      />
+    );
   } else if (filteredCountries.length <= 10) {
     return (
       <ul>
@@ -30,31 +50,42 @@ const CountryList = ({ countries, search, setSearch }) => {
   }
 };
 
-const CountryDetail = ({ country }) => {
+const CountryDetail = ({ country, weather, setWeather }) => {
+  // pull lanuages out of country object
   const languages = country.languages.map((language) => (
     <li key={language.name}>{language.name}</li>
   ));
-  return (
-    <>
-      <h1>{country.name}</h1>
-      <p>Capital: {country.capital}</p>
-      <p>Population: {country.population}</p>
-      <h3>Languages</h3>
-      <ul>{languages}</ul>
-      <img
-        src={country.flag}
-        alt={`Flag of ${country.name}`}
-        width="500"
-        height="300"
-      />
-    </>
-  );
+
+  if (weather === {}) {
+    return <div>Loading...</div>;
+  } else {
+    return (
+      <>
+        <h1>{country.name}</h1>
+        <p>Capital: {country.capital}</p>
+        <p>Population: {country.population}</p>
+        <h3>Languages</h3>
+        <ul>{languages}</ul>
+        <img
+          src={country.flag}
+          alt={`Flag of ${country.name}`}
+          width="500"
+          height="300"
+        />
+        <h3>Weather in {country.capital}</h3>
+        <p>Temperature: </p>
+        <p>this will be an img</p>
+        <p>Wind Speed: wind-speed-here</p>
+      </>
+    );
+  }
 };
 
 function App() {
   // state
   const [countries, setCountries] = useState([]);
   const [search, setSearch] = useState("");
+  const [weather, setWeather] = useState();
 
   // hooks
   useEffect(() => {
@@ -77,6 +108,8 @@ function App() {
         countries={countries}
         search={search}
         setSearch={setSearch}
+        weather={weather}
+        setWeather={setWeather}
       />
     </div>
   );
