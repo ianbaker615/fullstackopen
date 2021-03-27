@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
+import contactService from "./services/contacts";
 import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
 
 // components
 const NewUserForm = (props) => {
@@ -49,13 +49,10 @@ const App = () => {
 
   // hooks
   useEffect(() => {
-    console.log("effect hook");
-    axios.get("http://localhost:3001/contacts").then((res) => {
-      console.log("promise fulfilled");
-      setContacts(res.data);
+    contactService.getAll().then((initialContacts) => {
+      setContacts(initialContacts);
     });
   }, []);
-  console.log("redner", contacts.length, "contacts");
 
   // event handlers
   const addContact = (e) => {
@@ -73,11 +70,12 @@ const App = () => {
         phone: newPhone,
         id: uuidv4(),
       };
-
-      // append contactObject to persons array in state
-      setContacts(contacts.concat(contactObject));
-      setNewContact("");
-      setNewPhone("");
+      // add new contact to json-server and update state
+      contactService.create(contactObject).then((createdContact) => {
+        setContacts(contacts.concat(createdContact));
+        setNewContact("");
+        setNewPhone("");
+      });
     }
   };
   const handleContactChange = (e) => {
