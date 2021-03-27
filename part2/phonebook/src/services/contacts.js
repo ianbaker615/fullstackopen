@@ -11,10 +11,15 @@ const create = (newObject) => {
 
 // TODO update = (id, newObject) => {...}
 
+const remove = (id) => {
+  return axios.delete(`${baseUrl}/${id}`);
+};
+
 const contactService = {
   getAll,
   create,
-  // update
+  // update,
+  remove,
 };
 
 export default contactService;

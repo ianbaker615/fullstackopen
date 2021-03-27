@@ -20,7 +20,7 @@ const NewUserForm = (props) => {
     </form>
   );
 };
-const Contacts = ({ contacts, search }) => {
+const Contacts = ({ contacts, search, handleDelete }) => {
   // filtering for contacts
   const filteredContacts = contacts.filter((contact) =>
     contact.name.toLowerCase().includes(search.toLowerCase())
@@ -28,15 +28,21 @@ const Contacts = ({ contacts, search }) => {
   return (
     <ul>
       {filteredContacts.map((contact) => (
-        <Contact key={contact.id} contact={contact} />
+        <Contact
+          key={contact.id}
+          contact={contact}
+          contacts={contacts}
+          handleDelete={() => handleDelete(contact.id)}
+        />
       ))}
     </ul>
   );
 };
-const Contact = ({ contact }) => {
+const Contact = ({ contact, contacts, handleDelete }) => {
   return (
     <li>
-      {contact.name} {contact.phone}
+      {contact.name} {contact.phone}{" "}
+      <button onClick={handleDelete}>Delete</button>
     </li>
   );
 };
@@ -55,6 +61,14 @@ const App = () => {
   }, []);
 
   // event handlers
+  const handleDelete = (id) => {
+    const contact = contacts.find((contact) => contact.id === id);
+    if (window.confirm(`Delete ${contact.name}? from phonebook?`)) {
+      contactService.remove(contact.id).then(() => {
+        setContacts(contacts.filter((c) => c.id !== contact.id));
+      });
+    }
+  };
   const addContact = (e) => {
     // prevent form submission on change
     e.preventDefault();
@@ -105,7 +119,11 @@ const App = () => {
       />
       <hr />
       <h2>Contacts</h2>
-      <Contacts contacts={contacts} search={search} />
+      <Contacts
+        contacts={contacts}
+        search={search}
+        handleDelete={handleDelete}
+      />
     </div>
   );
 };
