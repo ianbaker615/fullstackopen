@@ -9,7 +9,9 @@ const create = (newObject) => {
   return axios.post(baseUrl, newObject).then((res) => res.data);
 };
 
-// TODO update = (id, newObject) => {...}
+const update = (id, newObject) => {
+  return axios.put(`${baseUrl}/${id}`, newObject).then((res) => res.data);
+};
 
 const remove = (id) => {
   return axios.delete(`${baseUrl}/${id}`);
@@ -18,7 +20,7 @@ const remove = (id) => {
 const contactService = {
   getAll,
   create,
-  // update,
+  update,
   remove,
 };
 

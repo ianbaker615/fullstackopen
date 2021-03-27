@@ -74,9 +74,26 @@ const App = () => {
     e.preventDefault();
     // check if name already in phonebook
     if (contacts.some((contact) => contact.name === newContact)) {
-      alert(`${newContact} is already in phonebook`);
-    } else if (contacts.some((contact) => contact.phone === newPhone)) {
-      alert(`${newPhone} is already in phonebook`);
+      const originalContact = contacts.find(
+        (contact) => contact.name === newContact
+      );
+      if (
+        window.confirm(
+          `Contact ${originalContact.name} already in phonebook. Replace old number with new number?`
+        )
+      ) {
+        const id = originalContact.id;
+        const changedContact = { ...originalContact, phone: newPhone };
+        contactService.update(id, changedContact).then((changedContact) => {
+          setContacts(
+            contacts.map((contact) =>
+              contact.id !== id ? contact : changedContact
+            )
+          );
+          setNewContact("");
+          setNewPhone("");
+        });
+      }
     } else {
       // build contact object
       const contactObject = {
@@ -114,6 +131,7 @@ const App = () => {
       <NewUserForm
         addContact={addContact}
         newContact={newContact}
+        newPhone={newPhone}
         handleContactChange={handleContactChange}
         handlePhoneChange={handlePhoneChange}
       />
