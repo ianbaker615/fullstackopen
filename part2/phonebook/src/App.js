@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import contactService from "./services/contacts";
 import { v4 as uuidv4 } from "uuid";
+import Notification from "./components/Notification";
 
 // components
 const NewUserForm = (props) => {
@@ -52,6 +53,7 @@ const App = () => {
   const [newContact, setNewContact] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [search, setSearch] = useState("");
+  const [successMessage, setSuccessMessage] = useState(null);
 
   // hooks
   useEffect(() => {
@@ -92,6 +94,13 @@ const App = () => {
           );
           setNewContact("");
           setNewPhone("");
+          // show success message for a few seconds
+          setSuccessMessage(
+            `Successfully updated ${changedContact.name}'s number from ${originalContact.phone} to ${changedContact.phone}`
+          );
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 5000);
         });
       }
     } else {
@@ -106,6 +115,11 @@ const App = () => {
         setContacts(contacts.concat(createdContact));
         setNewContact("");
         setNewPhone("");
+        // show success message for a few seconds
+        setSuccessMessage(`Added ${createdContact.name} to phonebook`);
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 5000);
       });
     }
   };
@@ -123,6 +137,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMessage} />
       <hr />
       <div>
         Search: <input value={search} onChange={handleSearchChange} />
