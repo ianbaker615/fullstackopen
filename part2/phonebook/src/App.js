@@ -2,57 +2,16 @@ import React, { useState, useEffect } from "react";
 import contactService from "./services/contacts";
 import { v4 as uuidv4 } from "uuid";
 import Notification from "./components/Notification";
+import NewUserForm from "./components/NewUserForm";
+import Contacts from "./components/Contacts";
 
-// components
-const NewUserForm = (props) => {
-  return (
-    <form onSubmit={props.addContact}>
-      <div>
-        name:{" "}
-        <input value={props.newContact} onChange={props.handleContactChange} />
-      </div>
-      <div>
-        phone number:{" "}
-        <input value={props.newPhone} onChange={props.handlePhoneChange} />
-      </div>
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>
-  );
-};
-const Contacts = ({ contacts, search, handleDelete }) => {
-  // filtering for contacts
-  const filteredContacts = contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(search.toLowerCase())
-  );
-  return (
-    <ul>
-      {filteredContacts.map((contact) => (
-        <Contact
-          key={contact.id}
-          contact={contact}
-          contacts={contacts}
-          handleDelete={() => handleDelete(contact.id)}
-        />
-      ))}
-    </ul>
-  );
-};
-const Contact = ({ contact, contacts, handleDelete }) => {
-  return (
-    <li>
-      {contact.name} {contact.phone}{" "}
-      <button onClick={handleDelete}>Delete</button>
-    </li>
-  );
-};
 const App = () => {
   // state
   const [contacts, setContacts] = useState([]);
   const [newContact, setNewContact] = useState("");
   const [newPhone, setNewPhone] = useState("");
   const [search, setSearch] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
   // hooks
@@ -86,22 +45,33 @@ const App = () => {
       ) {
         const id = originalContact.id;
         const changedContact = { ...originalContact, phone: newPhone };
-        contactService.update(id, changedContact).then((changedContact) => {
-          setContacts(
-            contacts.map((contact) =>
-              contact.id !== id ? contact : changedContact
-            )
-          );
-          setNewContact("");
-          setNewPhone("");
-          // show success message for a few seconds
-          setSuccessMessage(
-            `Successfully updated ${changedContact.name}'s number from ${originalContact.phone} to ${changedContact.phone}`
-          );
-          setTimeout(() => {
-            setSuccessMessage(null);
-          }, 5000);
-        });
+        contactService
+          .update(id, changedContact)
+          .then((changedContact) => {
+            setContacts(
+              contacts.map((contact) =>
+                contact.id !== id ? contact : changedContact
+              )
+            );
+            setNewContact("");
+            setNewPhone("");
+            // show success message for a few seconds
+            setSuccessMessage(
+              `Successfully updated ${changedContact.name}'s number from ${originalContact.phone} to ${changedContact.phone}`
+            );
+            setTimeout(() => {
+              setSuccessMessage(null);
+            }, 5000);
+          })
+          .catch((error) => {
+            setErrorMessage(
+              `Information for ${changedContact.name} has already been deleted from server`
+            );
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
+            setContacts(contacts.filter((c) => c.id !== id));
+          });
       }
     } else {
       // build contact object
@@ -133,11 +103,21 @@ const App = () => {
     setSearch(e.target.value);
   };
 
+  const checkMessage = () => {
+    if (successMessage) {
+      return [successMessage, true];
+    } else if (errorMessage) {
+      return [errorMessage, false];
+    } else {
+      return null;
+    }
+  };
+
   // the html that is returned
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={successMessage} />
+      <Notification message={checkMessage()} />
       <hr />
       <div>
         Search: <input value={search} onChange={handleSearchChange} />
