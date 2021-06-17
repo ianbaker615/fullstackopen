@@ -64,13 +64,11 @@ const App = () => {
             }, 5000);
           })
           .catch((error) => {
-            setErrorMessage(
-              `Information for ${changedContact.name} has already been deleted from server`
-            );
+            // access data validation error
+            setErrorMessage(error.response.data.error);
             setTimeout(() => {
               setErrorMessage(null);
             }, 5000);
-            setContacts(contacts.filter((c) => c.id !== id));
           });
       }
     } else {
@@ -81,16 +79,25 @@ const App = () => {
         id: uuidv4(),
       };
       // add new contact to json-server and update state
-      contactService.create(contactObject).then((createdContact) => {
-        setContacts(contacts.concat(createdContact));
-        setNewContact("");
-        setNewPhone("");
-        // show success message for a few seconds
-        setSuccessMessage(`Added ${createdContact.name} to phonebook`);
-        setTimeout(() => {
-          setSuccessMessage(null);
-        }, 5000);
-      });
+      contactService
+        .create(contactObject)
+        .then((createdContact) => {
+          setContacts(contacts.concat(createdContact));
+          setNewContact("");
+          setNewPhone("");
+          // show success message for a few seconds
+          setSuccessMessage(`Added ${createdContact.name} to phonebook`);
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          // access validation error messages
+          setErrorMessage(error.response.data.error);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        });
     }
   };
   const handleContactChange = (e) => {
